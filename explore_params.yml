@@ -77,6 +77,23 @@ optimal_grid_analysis: &optimal_grid_analysis !ExploreParams
     bandit_name: 'optimal_model'
   folder: "${env.TARGETFOLDER}/optimal"
 
+greedy_grid_analysis: &greedy_grid_analysis !ExploreParams
+  <<: *grid_base
+  grid:
+    p: [1.0]
+    w: [0., 1., 4., 10.]
+    M: [10]
+    l: [4]
+    b: [0.0, 0.3, 0.5, 0.8, 1.0]
+    # Q is not used but declared
+    Q: [0]
+    T: [5000]
+    epsilon: [0.01, 0.1, 0.5]
+  pipeline:
+    <<: *common_pipeline
+    bandit_model: !function src/experiment.get_epsilon_greedy_model
+    bandit_name: 'epsilon_greedy_model'
+  folder: "${env.TARGETFOLDER}/epsilon_greedy"
 
 big_grid_pipeline: !GenericPipeline
   runs:
@@ -85,6 +102,10 @@ big_grid_pipeline: !GenericPipeline
 optimal_grid_pipeline: !GenericPipeline
   runs:
     - *optimal_grid_analysis
+
+greedy_grid_pipeline: !GenericPipeline
+  runs:
+    - *greedy_grid_analysis
 
 grid_pipeline: !GenericPipeline
   runs:
